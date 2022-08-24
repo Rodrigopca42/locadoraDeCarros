@@ -8,6 +8,8 @@ import java.util.Scanner;
 
 import model.entities.CarRental;
 import model.entities.Vehicle;
+import model.services.BrazilTaxService;
+import model.services.RentalService;
 
 public class Program {
 
@@ -22,14 +24,27 @@ public class Program {
 		String model = tec.nextLine();
 		
 		System.out.print("Retirada (dd/MM/yyyy hh:mm): ");
-		Date start =sdf.parse(tec.next());
+		Date start =sdf.parse(tec.nextLine());
 		
 		System.out.print("Devolução (dd/MM/yyyy hh:mm): ");
-		Date finish =sdf.parse(tec.next());
+		Date finish =sdf.parse(tec.nextLine());
 		
 		CarRental cr = new CarRental(start, finish, new Vehicle(model));
 		
+		System.out.print("Insira o preço por hora: ");
+		double pricePerHour = tec.nextDouble();
 		
+		System.out.print("Insira o preço por dia: ");
+		double pricePerDay = tec.nextDouble();
+		
+		RentalService rentalService = new RentalService(pricePerHour, pricePerDay, new BrazilTaxService());
+		
+		rentalService.processInvoice(cr);
+		
+		System.out.println("FATURA: ");
+		System.out.println("Pagamento Básico: R$" + String.format("%.2f", cr.getInvoice().getBasicPayment()));
+		System.out.println("Taxa: R$" + String.format("%.2f", cr.getInvoice().getTax()));
+		System.out.println("Pagamento Total: R$" + String.format("%.2f", cr.getInvoice().getTotalPayment()));
 		
 		tec.close();
 		
